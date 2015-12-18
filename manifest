@@ -1,0 +1,28 @@
+#*******************************************************************
+#
+#       NewVideoPlayer -- Example Multi-Level Roku Channel
+#
+# Copyright (c) 2015, belltown. All rights reserved. See LICENSE.txt
+#
+#********************************************************************
+#
+title=NewVideoPlayer
+subtitle=Example Roku Channel With Multi-Level Categories
+#
+major_version=1
+minor_version=0
+build_version=1
+#
+mm_icon_focus_hd=pkg:/images/mm_icon_focus_hd-366x210.png
+mm_icon_focus_sd=pkg:/images/mm_icon_focus_sd-248x140.png
+#
+mm_icon_side_hd=pkg:/images/mm_icon_side_hd-108x69.png
+mm_icon_side_sd=pkg:/images/mm_icon_side_sd-80x46.png
+#
+splash_screen_fhd=pkg:/images/mm_icon_focus_hd-366x210.png
+splash_screen_hd=pkg:/images/mm_icon_focus_hd-366x210.png
+splash_screen_sd=pkg:/images/mm_icon_focus_hd-366x210.png
+#
+splash_color=#414a4c
+splash_min_time=1500
+#

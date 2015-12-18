@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+'********************************************************************
+'
+'       NewVideoPlayer - Example Multi-Level Roku Channel
+'
+' Copyright (c) 2015, belltown. All rights reserved. See LICENSE.txt
+'
+'*********************************************************************
+-->
+
+<categories>
+
+	<!--
+		A category can have nested category elements - and may terminate in categoryLeaf elements referring to local or remote Roku or RSS feeds
+	-->
+	<category title="TWiT TV" description="Roku Categories Example" sd_img="http://wiki.twit.tv/w/images/thumb/Brickhouse_Feed.jpg/220px-Brickhouse_Feed.jpg">
+		<category title="TWiT TV - LO"  description="This category has leaves" sd_img="http://twit.cachefly.net/coverart/all/all144videolo.jpg">
+			<categoryLeaf title="All Shows"		description="" feed="http://feeds.twit.tv/brickhouse_video_small.xml"></categoryLeaf>
+			<categoryLeaf title="Know How"		description="" feed="http://feeds.twit.tv/kh_video_small.xml"></categoryLeaf>
+			<categoryLeaf title="Coding 101"	description="" feed="http://feeds.twit.tv/code_video_small.xml"></categoryLeaf>
+			<categoryLeaf title="Security Now"	description="" feed="http://feeds.twit.tv/sn_video_small.xml"></categoryLeaf>
+		</category>
+
+		<category title="TWiT TV - HI" sd_img="http://twit.cachefly.net/coverart/all/all144videohi.jpg">
+			<categoryLeaf title="All Shows - HI" description="" feed="http://feeds.twit.tv/brickhouse_video_large.xml"></categoryLeaf>
+		</category>
+
+		<category title="TWiT TV - HD" sd_img="http://twit.cachefly.net/coverart/all/all144videohd.jpg">
+			<categoryLeaf title="All Shows - HD" description="" feed="http://feeds.twit.tv/brickhouse_video_hd.xml"></categoryLeaf>
+		</category>
+
+	</category>
+
+	<!--
+		A category can have a "feed" attribute referring to a local Roku or RSS feed
+	-->
+	<category	title="TWiT Roku Feed"
+				description="Roku Feed Example"
+				sd_img="http://wiki.twit.tv/w/images/thumb/Brickhouse_Feed.jpg/220px-Brickhouse_Feed.jpg"
+				feed="pkg:/xml/feed.xml">
+	</category>
+
+	<!--
+		A category can have a "feed" attribute referring to an external Roku or RSS feed
+	-->
+	<category	title="DTNS"
+				description="External RSS Feed Example"
+				sd_img="http://www.dailytechnewsshow.com/wp-content/uploads/2014/01/DTNS_CoverArt1400x1400-TPC.png"
+				feed="http://feeds.feedburner.com/daily_tech_news_show?format=xml">
+	</category>
+
+	<!--
+		A category can have subcategories with "feed" attributes referring to an external Roku or RSS feed
+	-->
+	<category title="TED Talks" description="Subcategories With External Feeds" sd_img="http://media.ted.com/images/ted/20891_160x160.gif">
+		<category title="Newest"				description=""	feed="http://feeds.feedburner.com/rokuNewest"				sd_img="http://media.ted.com/images/ted/20891_160x160.gif"></category>
+		<category title="Education"				description=""	feed="http://feeds.feedburner.com/rokuEducation"			sd_img="http://media.ted.com/images/ted/20891_160x160.gif"></category>
+		<category title="Art"					description=""	feed="http://feeds.feedburner.com/rokuArt"					sd_img="http://media.ted.com/images/ted/20891_160x160.gif"></category>
+		<category title="Business"				description=""	feed="http://feeds.feedburner.com/rokuBusiness"				sd_img="http://media.ted.com/images/ted/20891_160x160.gif"></category>
+		<category title="Health"				description=""	feed="http://feeds.feedburner.com/rokuHealth"				sd_img="http://media.ted.com/images/ted/20891_160x160.gif"></category>
+		<category title="Kids and Family"		description=""	feed="http://feeds.feedburner.com/rokuKidsAndFamily"		sd_img="http://media.ted.com/images/ted/20891_160x160.gif"></category>
+		<category title="Music"					description=""	feed="http://feeds.feedburner.com/rokuMusic"				sd_img="http://media.ted.com/images/ted/20891_160x160.gif"></category>
+		<category title="News and Politics"		description=""	feed="http://feeds.feedburner.com/rokuNewsAndPolitics"		sd_img="http://media.ted.com/images/ted/20891_160x160.gif"></category>
+		<category title="Science and Medicine"	description=""	feed="http://feeds.feedburner.com/rokuScienceAndMedicine"	sd_img="http://media.ted.com/images/ted/20891_160x160.gif"></category>
+		<category title="Society and Culture"	description=""	feed="http://feeds.feedburner.com/rokuSocietyAndCulture"	sd_img="http://media.ted.com/images/ted/20891_160x160.gif"></category>
+		<category title="Technology"			description=""	feed="http://feeds.feedburner.com/rokuTechnology"			sd_img="http://media.ted.com/images/ted/20891_160x160.gif"></category>
+	</category>
+
+	<!--
+		The same feeds as above, using categoryLeaf instead of category elements
+	-->
+	<category title="TED Talks" description="Category Leaves With External Feeds" sd_img="http://media.ted.com/images/ted/20891_160x160.gif">
+		<categoryLeaf title="Newest"				description=""	feed="http://feeds.feedburner.com/rokuNewest"></categoryLeaf>
+		<categoryLeaf title="Education"				description=""	feed="http://feeds.feedburner.com/rokuEducation"></categoryLeaf>
+		<categoryLeaf title="Art"					description=""	feed="http://feeds.feedburner.com/rokuArt"></categoryLeaf>
+		<categoryLeaf title="Business"				description=""	feed="http://feeds.feedburner.com/rokuBusiness"></categoryLeaf>
+		<categoryLeaf title="Health"				description=""	feed="http://feeds.feedburner.com/rokuHealth"></categoryLeaf>
+		<categoryLeaf title="Kids and Family"		description=""	feed="http://feeds.feedburner.com/rokuKidsAndFamily"></categoryLeaf>
+		<categoryLeaf title="Music"					description=""	feed="http://feeds.feedburner.com/rokuMusic"></categoryLeaf>
+		<categoryLeaf title="News and Politics"		description=""	feed="http://feeds.feedburner.com/rokuNewsAndPolitics"></categoryLeaf>
+		<categoryLeaf title="Science and Medicine"	description=""	feed="http://feeds.feedburner.com/rokuScienceAndMedicine"></categoryLeaf>
+		<categoryLeaf title="Society and Culture"	description=""	feed="http://feeds.feedburner.com/rokuSocietyAndCulture"></categoryLeaf>
+		<categoryLeaf title="Technology"			description=""	feed="http://feeds.feedburner.com/rokuTechnology"></categoryLeaf>
+	</category>
+
+	<!--
+		A category (or a root categories element) may have an in-line Roku feed
+	-->
+	<category title="Test HLS Feed" description="In-Line Roku Feed Example" sd_img="pkg:/images/mm_icon_focus_sd-248x140.png" hd_img="pkg:/images/mm_icon_focus_hd-366x210.png">
+		<feed title="HLS Test Feed" description="Testing 1, 2, 3" sd_img="pkg:/images/mm_icon_focus_sd-248x140.png" hd_img="pkg:/images/mm_icon_focus_hd-366x210.png">
+			<item>
+				<title>Testing HLS Feed</title>
+				<description>Just testing</description>
+				<streamFormat>hls</streamFormat>
+				<media>
+					<streamFormat>hls</streamFormat>	<!-- media streamFormat takes precedence over item streamFormat -->
+					<streamQuality>SD</streamQuality>
+					<streamBitrate>0</streamBitrate>
+					<streamUrl>http://content.jwplatform.com/manifests/vM7nH0Kl.m3u8</streamUrl>
+				</media>
+			</item>
+			<item>
+				<title>Test Item 2</title>
+			</item>
+		</feed>
+
+	</category>
+
+</categories>
