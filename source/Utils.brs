@@ -46,6 +46,10 @@ Function _getRokuVersion () As Object
 
 End Function
 
+Function _isLegacy () As Boolean
+	Return _getRokuVersion ().IsLegacy
+End Function
+
 '
 ' Retrieve the value of the bookmark having the specified key
 '
@@ -587,7 +591,7 @@ Function _logEvent (proc As String, msg As Dynamic) As Void
 					_debug ("Sequence:         " + info.Sequence.ToStr (), ">     ")
 					_debug ("SegUrl:           " + info.SegUrl, ">     ")
 					_debug ("SegStartTime:     " + info.SegStartTime.ToStr (), ">     ")
-				Else If msg.IsSegmentDownloadStarted ()	' Undocumented event
+				Else If Not _isLegacy () And msg.IsSegmentDownloadStarted ()	' Undocumented event
 					info = msg.GetInfo ()
 					evStr = "isSegmentDownloadStarted. Message: " + msg.GetMessage () + ". Index: " + msg.GetIndex ().ToStr () + ". Data: " + msg.GetData ().ToStr ()
 					_debug (proc + ". " + evType + " [" + msgType + "]-" + evStr)
@@ -595,7 +599,7 @@ Function _logEvent (proc As String, msg As Dynamic) As Void
 					_debug ("SegBitrate:       " + info.SegBitrate.ToStr (), ">     ")
 					_debug ("StartTime:        " + info.StartTime.ToStr (), ">     ")
 					_debug ("EndTime:          " + info.EndTime.ToStr (), ">     ")
-				Else If msg.IsDownloadSegmentInfo ()	' Undocumented event
+				Else If Not _isLegacy () And msg.IsDownloadSegmentInfo ()	' Undocumented event
 					info = msg.GetInfo ()
 					evStr = "isDownloadSegmentInfo. Message: " + msg.GetMessage () + ". Index: " + msg.GetIndex ().ToStr () + ". Data: " + msg.GetData ().ToStr ()
 					_debug (proc + ". " + evType + " [" + msgType + "]-" + evStr)
@@ -611,8 +615,19 @@ Function _logEvent (proc As String, msg As Dynamic) As Void
 				Else If msg.IsListItemSelected ()		' Undocumented event for this event type
 					evStr = "isListItemSelected ???. Index: " + msg.GetIndex ().ToStr ()
 					_debug (proc + ". " + evType + " [" + msgType + "]-" + evStr)
+				Else If Not _isLegacy () And msg.IsTimedMetaData ()
+					index = msg.GetIndex ()
+					info = msg.GetInfo ()
+					evStr = "isTimedMetaData. Message: " + msg.GetMessage () + " PTS Timecode: " + index.ToStr ()
+					_debug (proc + ". " + evType + " [" + msgType + "]-" + evStr)
+				Else If Not _isLegacy () And msg.IsCaptionModeChanged ()
+					index = msg.GetIndex ()
+					evStr = "isCaptionModeChanged. Message: " + msg.GetMessage () + ". Index: " + index.ToStr ()
+					If index = 0 Then evStr = evStr + " [Off]"
+					If index = 1 Then evStr = evStr + " [On]"
+					If index = 2 Then evStr = evStr + " [Instant replay]"
+					_debug (proc + ". " + evType + " [" + msgType + "]-" + evStr)
 				Else
-				stop
 					evStr = "Unknown. Message: " + msg.GetMessage () + " Index: " + msg.GetIndex ().ToStr ()
 					_debug (proc + ". " + evType + " [" + msgType + "]-" + evStr)
 				End If

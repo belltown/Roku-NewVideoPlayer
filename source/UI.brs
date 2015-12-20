@@ -321,14 +321,15 @@ Function uiDisplayVideoDetails (contentList As Object, index As Integer, breadLe
 				' Only attempt to play the video if there is at least one media stream
 				streams = contentList [index].LookupCI ("Streams")
 				If streams <> Invalid And streams.Count () > 0
+					' Display a blank facade to avoid flashing back to the roSpringboardScreen between videos
+					facade = CreateObject ("roImageCanvas")
+					facade.SetLayer (0, {Color: "#FF000000"})
+					facade.Show ()
+					' Play the video
 					If buttonId = 0					' Play
 						uiPlayVideo (contentList, index)
 						uiDisplayVideoDetailsSetContent (ui, contentList, index)		' Add/remove Resume button
 					Else If buttonId = 1			' Play all
-						' Display a blank facade to avoid flashing back to the roSpringboardScreen between videos
-						facade = CreateObject ("roImageCanvas")
-						facade.SetLayer (0, {Color: "#FF000000"})
-						facade.Show ()
 						' Play each video from the current position
 						While index < contentList.Count ()
 							' Only play the next video if it has at least one media stream
@@ -352,15 +353,18 @@ Function uiDisplayVideoDetails (contentList As Object, index As Integer, breadLe
 							End If
 						End While
 						uiDisplayVideoDetailsSetContent (ui, contentList, index)		' Add/remove Resume button
-						facade.Close ()
 					Else If buttonId = 2			' Resume
 						uiPlayVideo (contentList, index)
 						uiDisplayVideoDetailsSetContent (ui, contentList, index)		' Add/remove Resume button
 					Else If buttonId = 3			' Play from beginning
-						_setBookmark (contentList [index].ContentId, 0)
+						REM _setBookmark (contentList [index].ContentId, 0)
+						' Don't store bookmarks with a zero value; delete until a position notification is received
+						_clearBookmark (contentList [index].ContentId)
+						contentList [index].Delete ("playstart")	' Don't need PlayStart in the content list any more
 						uiPlayVideo (contentList, index)
 						uiDisplayVideoDetailsSetContent (ui, contentList, index)		' Add/remove Resume button
 					End If
+					facade.Close ()
 				Else
 					uiSoftError ("uiDisplayVideoDetails", LINE_NUM, "No media streams found for this item")
 					uiDisplayVideoDetailsSetContent (ui, contentList, index)
@@ -413,81 +417,157 @@ End Function
 
 '
 ' The selected video content is played using an roVideoScreen
-' TODO: Add retry logic if video fails after play has started successfully
 '
 Function uiPlayVideo (contentList As Object, index As Integer) As Boolean
 
 	' Return True if and only if playback completed normally (end of video reached).
-	' Allows 'Play All' functionality to determine whether its okay to play the next video.
+	' Allows 'Play All' functionality to determine whether it's okay to play the next video.
 	normalCompletion = False
+
+	' Keep track of how long video has been playing, for retry logic
+	playTimer = CreateObject ("roTimespan")
+
+	' Count number of retry attempts following playback failure
+	MAX_RETRIES = 3
+	numRetries = 0
 
 	' Make sure we have a valid content index
 	If index >= 0 And index < contentList.Count ()
-		port = CreateObject ("roMessagePort")
-		ui = CreateObject ("roVideoScreen")
-		ui.SetMessagePort (port)
-		ui.SetCertificatesFile ("common:/certs/ca-bundle.crt")
-		ui.InitClientCertificates ()
-		ui.SetPositionNotificationPeriod (10)
 
-		contentList [index].PlayStart = _getBookmark (contentList [index].ContentId)
+		done = False		' Set to True when finished or retry limit reached
 
-		statusMessage = ""		' Keep track of last status message received
+		' Keep retrying failed playback attempts
+		While Not done
 
-		ui.SetContent (contentList [index])
-		ui.Show ()
+			' Don't retry unless a failed playback occurs
+			done = True
 
-		While True
-			msg = Wait (0, port) : _logEvent ("uiPlayVideo", msg)
-			If msg <> Invalid
+			' Set up a new screen object for each retry
+			port = CreateObject ("roMessagePort")
+			ui = CreateObject ("roVideoScreen")
+			ui.SetMessagePort (port)
+			ui.SetCertificatesFile ("common:/certs/ca-bundle.crt")
+			ui.InitClientCertificates ()
+			ui.SetPositionNotificationPeriod (10)
 
-				' The screen is being closed
-				If msg.IsScreenClosed ()
-					Exit While
-
-				' Keep track of the playback position
-				Else If msg.IsPlaybackPosition ()
-					_setBookmark (contentList [index].ContentId, msg.GetIndex ())
-
-				' Playback completed normally. Roku will close the screen after sending an IsScreenClosed event.
-				' Ensure that if Play All is in use, the next video can be played.
-				Else If msg.IsFullResult ()
-					normalCompletion = True
-					_clearBookmark (contentList [index].ContentId)
-
-				' Store status message to display if a request-failed message occurs
-				Else If msg.IsStatusMessage ()
-					statusMessage = msg.GetMessage ()
-
-				' Video playback failed
-				Else If msg.IsRequestFailed ()
-					failIndex = msg.GetIndex ()
-					message = msg.GetMessage ()
-					If message = ""
-						message = statusMessage
-					End If
-					If failIndex <= 0 And failIndex >= -5
-						failMessage = [	"Network error : server down or unresponsive, server is unreachable, network setup problem on the client.",
-										"HTTP error: malformed headers or HTTP error result.",
-										"Connection timed out.",
-										"Unknown error.",
-										"Empty list; no streams were specified to play.",
-										"Media error; the media format is unknown or unsupported." ][-failIndex]
-						unsupportedMessage = ""
-						If failIndex = -3 Or failIndex = -5
-							unsupportedMessage = "Possibly the feed has no Roku-compatible video content."
-						End If
-						uiDisplayMessage ("Video Playback Failed", [failMessage, message, unsupportedMessage])
-					End If
-					ui.Close ()
-
-				End If
+			' Set PlayStart to the currently-bookmarked position.
+			' Not need to set unless we're at least 10 seconds into the video.
+			playStart = _getBookmark (contentList [index].ContentId)
+			If playStart >= 10
+				contentList [index].PlayStart = playStart
 			End If
+
+			statusMessage = ""		' Keep track of last status message received
+
+			ui.SetContent (contentList [index])
+			ui.Show ()
+
+			While True
+				msg = Wait (0, port) : _logEvent ("uiPlayVideo", msg)
+				If msg <> Invalid
+
+					' The screen is being closed
+					If msg.IsScreenClosed ()
+						Exit While
+
+					' Keep track of the playback position
+					Else If msg.IsPlaybackPosition ()
+						' Don't start bookmarking until we're at least 10 seconds into the video
+						If msg.GetIndex () >= 10
+							_setBookmark (contentList [index].ContentId, msg.GetIndex ())
+						End If
+
+					' If the stream started then reset the play timer
+					Else If msg.IsStreamStarted ()
+						playTimer.Mark ()
+
+					' Playback completed normally. Roku will close the screen after sending an IsScreenClosed event.
+					' Ensures that if Play All is in use, the next video can be played.
+					Else If msg.IsFullResult ()
+						normalCompletion = True
+						_clearBookmark (contentList [index].ContentId)
+						contentList [index].Delete ("playstart")	' Don't need PlayStart in the content list any more
+
+					' Store status message to display if a request-failed message occurs
+					Else If msg.IsStatusMessage ()
+						statusMessage = msg.GetMessage ()
+
+					' Video playback failed
+					Else If msg.IsRequestFailed ()
+						failIndex = msg.GetIndex ()
+						message = msg.GetMessage ()
+						failMessage = ""
+						unsupportedMessage = ""
+
+						' Roku firmware doesn't appear to return a message for a request failed event,
+						' so use the preceding status message instead.
+						If message = ""
+							message = statusMessage
+						End If
+
+						' If a video has been playing for a while, reset the retry count
+						If playTimer.TotalSeconds () > 300
+							numRetries = 0
+							playTimer.Mark ()
+						End If
+
+						numRetries = numRetries + 1
+
+						If numRetries > MAX_RETRIES Or failIndex = -4	' Don't retry if no video streams
+							' Roku firmware only returns a number for a failure; translate to a message to display to the user
+							If failIndex >= -5 And failIndex <= 0
+								failMessage = [	"Network error : server down or unresponsive, server is unreachable, network setup problem on the client.",
+												"HTTP error: malformed headers or HTTP error result.",
+												"Connection timed out.",
+												"Unknown error.",
+												"Empty list; no streams were specified to play.",
+												"Media error; the media format is unknown or unsupported." ][-failIndex]
+								If failIndex = -4 Or failIndex = -5
+									unsupportedMessage = "Possibly the feed has no Roku-compatible video content."
+								End If
+							Else
+								failMessage = "Unknown failure code: " + failIndex.ToStr ()
+							End If
+
+							' Debugging info - list the streams for this content item
+							For i = 0 To contentList [index].Streams.Count () - 1
+								stream = contentList [index].Streams [i]
+								_debug ("uiPlayVideo. Stream[" + i.ToStr () + "]. Url: " + stream.Url)
+							End For
+
+							uiDisplayMessage ("Video Playback Failed", [failMessage, message, unsupportedMessage])
+						Else
+							' Retry the failed video
+							_debug ("uiPlayVideo. Retry Attempt #" + numRetries.ToStr ())
+							uiDisplayCanvasMessage ("Video Playback Failed. " + Chr (10) + Chr (10) + "Retrying ....", 3000)
+							done = False
+						End If
+						' Close the screen, exiting the loop when the IsScreenClosed event is received
+						ui.Close ()
+					End If
+				End If
+			End While
 		End While
+
 	End If
 
 	Return normalCompletion
 
+End Function
+
+'
+' Display an message on an image canvas.
+' Keep message displayed until the timeout expires or the user presses a key.
+'
+Function uiDisplayCanvasMessage (message As String, timeout = 0 As Integer) As Void
+	port = CreateObject ("roMessagePort")
+	ui = CreateObject ("roImageCanvas")
+	ui.SetMessagePort (port)
+	ui.SetLayer (0, {Color: "#FF101010"})
+	ui.SetLayer (1,	{Text: message, TextAttrs:  {Color: "#FFEBEBEB", Font: "Large", HAlign: "HCenter", VAlign: "VCenter"}})
+	ui.Show ()
+	msg = Wait (timeout, port) : _logEvent ("uiDisplayCanvasMessage", msg)
+	ui.Close ()
 End Function
 
 '

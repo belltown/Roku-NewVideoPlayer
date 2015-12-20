@@ -1,4 +1,4 @@
-NewVideoPlayer Roku Example Code, Version 1.0, December 15, 2015
+NewVideoPlayer Roku Example Code
 
 Copyright (c) 2015, belltown. All rights reserved.
 
