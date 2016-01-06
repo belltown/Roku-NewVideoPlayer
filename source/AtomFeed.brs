@@ -12,20 +12,20 @@
 '
 Function getAtomContent (xml As Object) As Object
 
-	contentItem = {}
+    contentItem = {}
 
-	uiSoftError ("getAtomContent", LINE_NUM, "Atom feeds are not currently supported")
+    uiSoftError ("getAtomContent", LINE_NUM, "Atom feeds are not currently supported")
 
-	Return contentItem
+    Return contentItem
 
 End Function
 
 Function parseAtomFeedXml (xml As Object) As Object
 
-	feed = {}
+    feed = {}
 
-	uiSoftError ("parseAtomFeedXml", LINE_NUM, "Atom feeds are not currently supported")
+    uiSoftError ("parseAtomFeedXml", LINE_NUM, "Atom feeds are not currently supported")
 
-	Return feed
+    Return feed
 
 End Function

@@ -7,47 +7,47 @@ http://sourceforge.net/p/rokusdkexamples/code/HEAD/tree/trunk/rokusdkexamples-co
 
 Features:
 
--	Unlimited <category> levels, each displayed using an roPosterScreen.
-	The lowest <category> having <categoryLeaf> elements is displayed as an roPosterScreen with a filter banner.
-	An roGridScreen can be used instead of the roPosterScreen with a filter banner, by changing 2 lines of code.
-	All <category> and nested <category> elements must be specified in the top-level Xml file.
-	Each <categoryLeaf> must refer to a separate <feed> file containing the feed's <item> elements.
+-   Unlimited <category> levels, each displayed using an roPosterScreen.
+    The lowest <category> having <categoryLeaf> elements is displayed as an roPosterScreen with a filter banner.
+    An roGridScreen can be used instead of the roPosterScreen with a filter banner, by changing 2 lines of code.
+    All <category> and nested <category> elements must be specified in the top-level Xml file.
+    Each <categoryLeaf> must refer to a separate <feed> file containing the feed's <item> elements.
 
--	The top-level Xml file may also be a Roku <feed> file, or an <rss> file.
+-   The top-level Xml file may also be a Roku <feed> file, or an <rss> file.
 
--	RSS files may contain RSS 2.0 elements, MRSS extensions, and iTunes extensions.
-	Note: The RSS/MRSS/iTunes extensions are ONLY supported in an <rss> feed, NOT in a Roku <feed>.
+-   RSS files may contain RSS 2.0 elements, MRSS extensions, and iTunes extensions.
+    Note: The RSS/MRSS/iTunes extensions are ONLY supported in an <rss> feed, NOT in a Roku <feed>.
 
--	A "feed" attribute may be specified for a <category> element, only if there are no subordinate <categoryLeaf> elements.
+-   A "feed" attribute may be specified for a <category> element, only if there are no subordinate <categoryLeaf> elements.
 
--	A Roku feed (but not an RSS feed) may appear inline in the top-level Xml file,
-	subordinate to a <categories> or <category> element, but not a <categoryLeaf>.
+-   A Roku feed (but not an RSS feed) may appear inline in the top-level Xml file,
+    subordinate to a <categories> or <category> element, but not a <categoryLeaf>.
 
--	Xml files may be referenced either using a local Roku filename or a remote url (http or https).
+-   Xml files may be referenced either using a local Roku filename or a remote url (http or https).
 
--	Xml element and attribute names are case-insensitive.
+-   Xml element and attribute names are case-insensitive.
 
--	See pkg:/xml/categories.xml and pkg:/xml/feed.xml for example feeds.
+-   See pkg:/xml/categories.xml and pkg:/xml/feed.xml for example feeds.
 
--	See RokuFeed.brs for a list of supported Xml elements for a Roku feed.
+-   See RokuFeed.brs for a list of supported Xml elements for a Roku feed.
 
--	See Mrss.brs for a list of supported MRSS elements for an RSS feed.
+-   See Mrss.brs for a list of supported MRSS elements for an RSS feed.
 
--	See Itunes.brs for a list of supported iTunes elements for an RSS feed.
+-   See Itunes.brs for a list of supported iTunes elements for an RSS feed.
 
--	Supports Play/Resume, as well as 'Play all' and 'Play from beginning'.
+-   Supports Play/Resume, as well as 'Play all' and 'Play from beginning'.
 
--	The last play position for the previous 10 videos played is stored for 'Resume' functionality.
+-   The last play position for the previous 10 videos played is stored for 'Resume' functionality.
 
--	Should work on an SD TV, even if no SD streams are specified in the Xml feed file.
+-   Should work on an SD TV, even if no SD streams are specified in the Xml feed file.
 
--	Supports both MP4 and HLS video streams.
+-   Supports both MP4 and HLS video streams.
 
--	Supports 'https' video and image urls.
+-   Supports 'https' video and image urls.
 
--	Compatible with the Xml files used by the Roku SDK videoplayer example (TED Talks Videos).
+-   Compatible with the Xml files used by the Roku SDK videoplayer example (TED Talks Videos).
 
--	Should work on all Roku firmware versions, including legacy 3.1 firmware.
+-   Should work on all Roku firmware versions, including legacy 3.1 firmware.
 
 
 Usage:

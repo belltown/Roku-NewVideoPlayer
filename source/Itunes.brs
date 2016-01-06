@@ -12,14 +12,14 @@
 '
 Function parseITunesFeedXml (xml As Object) As Object
 
-	feed = parseITunesHeader (xml)
+    feed = parseITunesHeader (xml)
 
-	feed.itemList = []
-	For Each item in xml.GetNamedElementsCI ("item")
-		feed.itemList.Push (parseITunesItem (item))
-	End For
+    feed.itemList = []
+    For Each item in xml.GetNamedElementsCI ("item")
+        feed.itemList.Push (parseITunesItem (item))
+    End For
 
-	Return feed
+    Return feed
 
 End Function
 
@@ -29,35 +29,35 @@ End Function
 '
 Function parseITunesHeader (xml As Object) As Object
 
-	header = {}
+    header = {}
 
-	' <itunes:author>			- Actors
-	' <itunes:block>
-	' <itunes:category>			- Categories
-	' <itunes:image>			- SDPosterUrl/HDPosterUrl
-	' <itunes:explicit>
-	' <itunes:complete>
-	' <itunes:new-feed-url>
-	' <itunes:owner>
-	' <itunes:subtitle>			- ShortDescriptionLine2
-	' <itunes:summary>			- Description
+    ' <itunes:author>           - Actors
+    ' <itunes:block>
+    ' <itunes:category>         - Categories
+    ' <itunes:image>            - SDPosterUrl/HDPosterUrl
+    ' <itunes:explicit>
+    ' <itunes:complete>
+    ' <itunes:new-feed-url>
+    ' <itunes:owner>
+    ' <itunes:subtitle>         - ShortDescriptionLine2
+    ' <itunes:summary>          - Description
 
-	header.author = _getXmlString (xml, "itunes:author")
+    header.author = _getXmlString (xml, "itunes:author")
 
-	header.categoryList = getITunesCategories (xml)
+    header.categoryList = getITunesCategories (xml)
 
-	header.image = ""
-	imageList = xml.GetNamedElementsCI ("itunes:image")
-	If imageList.Count () > 0
-		image = imageList [0]
-		header.image = _getXmlAttrString (image, "href")
-	End If
+    header.image = ""
+    imageList = xml.GetNamedElementsCI ("itunes:image")
+    If imageList.Count () > 0
+        image = imageList [0]
+        header.image = _getXmlAttrString (image, "href")
+    End If
 
-	header.subtitle = _getXmlString (xml, "itunes:subtitle")
+    header.subtitle = _getXmlString (xml, "itunes:subtitle")
 
-	header.summary = _getXmlString (xml, "itunes:summary")
+    header.summary = _getXmlString (xml, "itunes:summary")
 
-	Return header
+    Return header
 
 End Function
 
@@ -66,36 +66,36 @@ End Function
 '
 Function parseITunesItem (xml As Object) As Object
 
-	item = {}
+    item = {}
 
-	' <itunes:author>				- Actors
-	' <itunes:block>
-	' <itunes:image>				- SDImageUrl/HDImageUrl
-	' <itunes:duration>				- Runtime
-	' <itunes:explicit>
-	' <itunes:isClosedCaptioned>	- ClosedCaptions
-	' <itunes:order>
-	' <itunes:subtitle>				- ShortDescriptionLine2
-	' <itunes:summary>				- Description
+    ' <itunes:author>               - Actors
+    ' <itunes:block>
+    ' <itunes:image>                - SDImageUrl/HDImageUrl
+    ' <itunes:duration>             - Runtime
+    ' <itunes:explicit>
+    ' <itunes:isClosedCaptioned>    - ClosedCaptions
+    ' <itunes:order>
+    ' <itunes:subtitle>             - ShortDescriptionLine2
+    ' <itunes:summary>              - Description
 
-	item.author = _getXmlString (xml, "itunes:author")
+    item.author = _getXmlString (xml, "itunes:author")
 
-	item.image = ""
-	imageList = xml.GetNamedElementsCI ("itunes:image")
-	If imageList.Count () > 0
-		image = imageList [0]
-		item.image = _getXmlAttrString (image, "url")
-	End If
+    item.image = ""
+    imageList = xml.GetNamedElementsCI ("itunes:image")
+    If imageList.Count () > 0
+        image = imageList [0]
+        item.image = _getXmlAttrString (image, "url")
+    End If
 
-	item.duration = formatITunesDuration (_getXmlString (xml, "itunes:duration"))
+    item.duration = formatITunesDuration (_getXmlString (xml, "itunes:duration"))
 
-	item.isClosedCaptioned = LCase (_getXmlString (xml, "itunes:isClosedCaptioned")) = "yes"
+    item.isClosedCaptioned = LCase (_getXmlString (xml, "itunes:isClosedCaptioned")) = "yes"
 
-	item.subtitle = _getXmlString (xml, "itunes:subtitle")
+    item.subtitle = _getXmlString (xml, "itunes:subtitle")
 
-	item.summary = _getXmlString (xml, "itunes:summary")
+    item.summary = _getXmlString (xml, "itunes:summary")
 
-	Return item
+    Return item
 
 End Function
 
@@ -103,25 +103,25 @@ End Function
 ' Get category and (recursively) sub-category values
 '
 Function getITunesCategories (xml As Object) As Object
-	categoryList = []
-	For Each category In xml.GetNamedElementsCI ("itunes:category")
-		categoryText = _getXmlAttrString (category, "text")
-		If categoryText <> ""
-			categoryList.Push (categoryText)
-		End If
-		categoryList.Append (getITunesCategories (category))
-	End For
-	Return categoryList
+    categoryList = []
+    For Each category In xml.GetNamedElementsCI ("itunes:category")
+        categoryText = _getXmlAttrString (category, "text")
+        If categoryText <> ""
+            categoryList.Push (categoryText)
+        End If
+        categoryList.Append (getITunesCategories (category))
+    End For
+    Return categoryList
 End Function
 
 '
 ' Convert an iTunes duration ("h:mm:ss") to an integer in seconds
 '
 Function formatITunesDuration (duration As String) As Integer
-	hh = 0 : mm = 0 : ss = 0
-	list = duration.Tokenize (":")
-	If list.Count () >= 3 Then hh = list.RemoveHead ().ToInt ()
-	If list.Count () >= 2 Then mm = List.RemoveHead ().ToInt ()
-	If list.Count () >= 1 Then ss = list.RemoveHead ().ToInt ()
-	Return ((hh * 60) + mm) * 60 + ss
+    hh = 0 : mm = 0 : ss = 0
+    list = duration.Tokenize (":")
+    If list.Count () >= 3 Then hh = list.RemoveHead ().ToInt ()
+    If list.Count () >= 2 Then mm = List.RemoveHead ().ToInt ()
+    If list.Count () >= 1 Then ss = list.RemoveHead ().ToInt ()
+    Return ((hh * 60) + mm) * 60 + ss
 End Function
