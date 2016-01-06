@@ -105,6 +105,28 @@
                 <title>Test Item 2</title>
             </item>
         </feed>
+    </category>
+
+    <!--
+        A "Live" stream
+    -->
+    <category title="The Shopping Channel" description="Example Live Stream" sd_img="http://ia801504.us.archive.org/1/items/TscGraphics/Tsc214x144Sd.png" hd_img="http://ia801504.us.archive.org/1/items/TscGraphics/Tsc290x218Hd.png">
+        <feed title="TSC" description="" sd_img="http://ia801504.us.archive.org/1/items/TscGraphics/Tsc214x144Sd.png" hd_img="http://ia801504.us.archive.org/1/items/TscGraphics/Tsc290x218Hd.png">
+            <item sdImg="http://ia801504.us.archive.org/1/items/TscGraphics/Tsc214x144Sd.png" hd_img="http://ia801504.us.archive.org/1/items/TscGraphics/Tsc290x218Hd.png">
+                <title>Live - The Shopping Channel</title>
+                <description>The Shopping Channel</description>
+                <streamFormat>hls</streamFormat>
+                <media>
+                    <streamQuality>SD</streamQuality>
+                    <streamBitrate>1500</streamBitrate>
+                    <streamUrl>http://tscstreaming-lh.akamaihd.net/i/TSCLiveStreaming_1@91031/index_3_av-p.m3u8</streamUrl>
+                </media>
+                <synopsis>TSC is a Canadian English language cable television home shopping channel. The Shopping Channel is a division of Rogers Media. The channel is headquartered in Mississauga, Ontario. It showcases various products which viewers can purchase either by telephone or internet. TSC also distributes a catalogue twice per year and owns an off air outlet store located in Toronto.</synopsis>
+                <genres>Shopping</genres>
+                <genres>Live</genres>
+                <live>True</live>
+            </item>
+        </feed>
 
     </category>
 

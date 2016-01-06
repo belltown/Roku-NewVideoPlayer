@@ -230,6 +230,7 @@ Function getRssItemContent (rss As Object, mrss As Object, iTunes As Object, ind
     End For
 
     ' Set up the Content Meta-Data, only setting fields that have data, to minimize Content Item size
+    contentItem.Live                    = False ' Currently no way of discerning whether an RSS feed item is "live"
     contentItem.HDBranded               = hasHD Or fullHD
     contentItem.IsHD                    = hasHD Or fullHD
     contentItem.FullHD                  = fullHD

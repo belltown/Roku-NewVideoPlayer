@@ -359,8 +359,10 @@ Function uiDisplayVideoDetails (contentList As Object, index As Integer, breadLe
                     Else If buttonId = 3            ' Play from beginning
                         REM _setBookmark (contentList [index].ContentId, 0)
                         ' Don't store bookmarks with a zero value; delete until a position notification is received
-                        _clearBookmark (contentList [index].ContentId)
-                        contentList [index].Delete ("playstart")    ' Don't need PlayStart in the content list any more
+                        If Not contentList [index].Live
+                            _clearBookmark (contentList [index].ContentId)
+                            contentList [index].Delete ("playstart")    ' Don't need PlayStart in the content list any more
+                        End If
                         uiPlayVideo (contentList, index)
                         uiDisplayVideoDetailsSetContent (ui, contentList, index)        ' Add/remove Resume button
                     End If
@@ -399,16 +401,16 @@ Function uiDisplayVideoDetailsSetContent (ui As Object, contentList As Object, i
 
     ui.AllowUpdates (False)
     ui.ClearButtons ()
-    If _getBookmark (contentList [index].ContentId) < 10
+    If contentList [index].Live Or _getBookmark (contentList [index].ContentId) < 10
         ui.AddButton (0, "Play")
-        ui.AddButton (1, "Play all")
+        If contentList.Count () > 1 Then ui.AddButton (1, "Play all")
     Else
         ui.AddButton (2, "Resume")
         ui.AddButton (3, "Play from beginning")
-        ui.AddButton (1, "Play all")
+        If contentList.Count () > 1 Then ui.AddButton (1, "Play all")
     End If
-    ui.AllowNavLeft (contentList.Count () > 0)
-    ui.AllowNavRight (contentList.Count () > 0)
+    ui.AllowNavLeft (contentList.Count () > 1)
+    ui.AllowNavRight (contentList.Count () > 1)
     ui.SetStaticRatingEnabled (contentList [index].StarRating <> Invalid)   ' Don't display stars if none in content list
     ui.SetContent (contentList [index])
     ui.AllowUpdates (True)
@@ -448,13 +450,20 @@ Function uiPlayVideo (contentList As Object, index As Integer) As Boolean
             ui.SetMessagePort (port)
             ui.SetCertificatesFile ("common:/certs/ca-bundle.crt")
             ui.InitClientCertificates ()
-            ui.SetPositionNotificationPeriod (10)
+            ' Don't attempt to bookmark live content
+            If Not contentList [index].Live
+                ui.SetPositionNotificationPeriod (10)
+                ' Set PlayStart to the currently-bookmarked position.
+                ' Not need to set unless we're at least 10 seconds into the video.
+                playStart = _getBookmark (contentList [index].ContentId)
+                If playStart >= 10
+                    contentList [index].PlayStart = playStart
+                End If
+            End If
 
-            ' Set PlayStart to the currently-bookmarked position.
-            ' Not need to set unless we're at least 10 seconds into the video.
-            playStart = _getBookmark (contentList [index].ContentId)
-            If playStart >= 10
-                contentList [index].PlayStart = playStart
+            ' Disable Fast-Forward and Rewind for live videos
+            If contentList [index].Live
+                ui.SetPreviewMode (True)
             End If
 
             statusMessage = ""      ' Keep track of last status message received
@@ -473,7 +482,7 @@ Function uiPlayVideo (contentList As Object, index As Integer) As Boolean
                     ' Keep track of the playback position
                     Else If msg.IsPlaybackPosition ()
                         ' Don't start bookmarking until we're at least 10 seconds into the video
-                        If msg.GetIndex () >= 10
+                        If Not contentList [index].Live And msg.GetIndex () >= 10
                             _setBookmark (contentList [index].ContentId, msg.GetIndex ())
                         End If
 
@@ -485,8 +494,10 @@ Function uiPlayVideo (contentList As Object, index As Integer) As Boolean
                     ' Ensures that if Play All is in use, the next video can be played.
                     Else If msg.IsFullResult ()
                         normalCompletion = True
-                        _clearBookmark (contentList [index].ContentId)
-                        contentList [index].Delete ("playstart")    ' Don't need PlayStart in the content list any more
+                        If Not contentList [index].Live
+                            _clearBookmark (contentList [index].ContentId)
+                            contentList [index].Delete ("playstart")    ' Don't need PlayStart in the content list any more
+                        End If
 
                     ' Store status message to display if a request-failed message occurs
                     Else If msg.IsStatusMessage ()

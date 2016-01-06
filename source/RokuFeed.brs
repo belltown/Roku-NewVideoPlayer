@@ -167,8 +167,11 @@ Function getRokuItemContent (roku As Object, index As Integer) As Object
         actorList [index] = _xmlEntityDecode (_stripHtmlTags (actorList [index]))
     End For
 
+    live = item.live
+
     ' Set up the Content Meta-Data, only setting fields that have data, to minimize Content Item size
     contentItem.HDBranded               = hasHD Or fullHD
+    contentItem.Live                    = live
     contentItem.IsHD                    = hasHD Or fullHD
     contentItem.FullHD                  = fullHD
     contentItem.ContentId               = contentId
@@ -227,8 +230,8 @@ End Function
 '
 '   Additional <feed> attributes supported by this example channel are:
 '       content_type            - "video" is the only supported feed content type for now
-'       sd_img                  - SD image path (if not specified for the <item> elements)
-'       hd_img                  - HD image path (if not specified for the <item> elements)
+'       sd_img/sdImg            - SD image path (if not specified for the <item> elements)
+'       hd_img/hdImg            - HD image path (if not specified for the <item> elements)
 '
 Function parseRokuHeader (xml As Object) As Object
 
@@ -244,7 +247,10 @@ Function parseRokuHeader (xml As Object) As Object
 
     ' Allow <feed> element to contain image attributes to act as defaults for the subordinate <item> elements
     header.sdImg = _getXmlAttrString (xml, "sd_img")
+    If header.sdImg = "" Then header.sdImg = _getXmlAttrString (xml, "sdImg")
     header.hdImg = _getXmlAttrString (xml, "hd_img")
+    If header.hdImg = "" Then header.hdImg = _getXmlAttrString (xml, "hdImg")
+    ' If sdImg missing then use hdImg and vice-versa
     If header.sdImg = "" Then header.sdImg = header.hdImg
     If header.hdImg = "" Then header.hdImg = header.sdImg
 
@@ -293,6 +299,7 @@ End Function
 '   <sdBifUrl>                  - Url for SD trick modes (not yet tested)
 '   <hdBifUrl>                  - Url for HD trick modes (not yet tested)
 '   <actors>                    - One element per actor, used to set the Actors on the item's roSpringboardScreen
+'   <live>                      - "True" if content is for a live stream
 '
 Function parseRokuItem (xml As Object) As Object
 
@@ -414,6 +421,8 @@ Function parseRokuItem (xml As Object) As Object
             item.actorList.Push (actorItem)
         End If
     End For
+
+    item.live = _getXmlBoolean (xml, "live", False)
 
     Return item
 
