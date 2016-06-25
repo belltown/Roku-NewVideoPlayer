@@ -74,6 +74,8 @@ Function getRokuItemContent (roku As Object, index As Integer) As Object
 
     streamFormat = item.streamFormat
 
+    switchingStrategy = item.switchingStrategy
+
     contentType = item.contentType
 
     contentId = item.contentId
@@ -193,6 +195,7 @@ Function getRokuItemContent (roku As Object, index As Integer) As Object
     If starRating <> ""                 Then contentItem.StarRating             = starRating
     If releaseDate <> ""                Then contentItem.ReleaseDate            = releaseDate
     If description <> ""                Then contentItem.ShortDescriptionLine2  = description
+    If switchingStrategy <> ""          Then contentItem.SwitchingStrategy      = switchingStrategy
     If genreList.Count () > 0           Then contentItem.Categories             = genreList
     If actorList.Count () > 0           Then contentItem.Actors                 = actorList
 
@@ -289,6 +292,7 @@ End Function
 '
 '   <description>               - Used as the item's ShortDescriptionLine2 (and Description if <synopsis> is missing)
 '   <streamFormat>              - "mp4" or "hls"
+'   <switchingStrategy>         - The SwitchingStrategy used when <streamFormat> is "hls". Default is "full-adaptation"
 '   <fullHD>                    - "True" if the item was encoded at 1080p resolution
 '   <rating>                    - The Rating, e.g. "PG-13"
 '   <starRating>                - The StarRating, an integer from 1 to 100
@@ -388,6 +392,13 @@ Function parseRokuItem (xml As Object) As Object
         Else
             item.streamFormat = "mp4"
         End If
+    End If
+
+    ' For streamFormat of "hls", specify switchingStrategy
+    If item.streamFormat = "hls"
+        item.switchingStrategy = LCase(_getXmlString (xml, "switchingStrategy", "full-adaptation"))
+    Else
+        item.switchingStrategy = ""
     End If
 
     item.rating = _getXmlString (xml, "rating")
