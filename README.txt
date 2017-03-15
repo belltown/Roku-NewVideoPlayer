@@ -1,3 +1,15 @@
+=============================================================================
+ W A R N I N G !!!
+=============================================================================
+ THIS CODE USES THE ROKU LEGACY SDK, WHICH IS SCHEDULED TO BE DEPRECATED!!!
+
+ According the Roku Developer Blog: https://blog.roku.com/developer/2017/02/01/legacy-sdk/,
+ as of July 1, 2017, no new channels may use the Legacy SDK
+ as of January 1, 2018, no channel updates may use the Legacy SDK
+ as of January 1, 2019, Legacy SDK components will be removed from the Roku OS
+
+==============================================================================
+
 NewVideoPlayer -- An example Roku channel with multi-level categories
 
 A completely re-written and enhanced version of the Roku SDK Example 'videoplayer' Channel.
